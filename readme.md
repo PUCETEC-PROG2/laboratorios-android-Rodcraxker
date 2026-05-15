@@ -1,8 +1,9 @@
 # Laboratorio Android. Cliente de GitHub
 
 ## Datos del estudiante
-- [Nombre del estudiante]
+- Rod Muñoz
 - [Carrera]
+- PUCETEC Software 1490
 
 ## Descripción del Proyecto
 Este proyecto es una serie de laboratorios para estudiantes donde se implementará una aplicación Android que funciona como cliente de GitHub utilizando Jetpack Compose. La aplicación evoluciona progresivamente desde una UI estática hasta una integración completa con la API REST de GitHub.
