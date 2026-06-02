@@ -27,9 +27,9 @@ import ec.edu.puce.githubclient.viewmodels.RepoListViewModel
 
 @Composable
 fun RepoList(
+    onNavigateToForm: () -> Unit, // Quita el ={} para que sea obligatorio
     modifier: Modifier = Modifier,
-    viewModel: RepoListViewModel = viewModel(),
-    onNavigateToForm:() -> Unit={}
+    viewModel: RepoListViewModel = viewModel()
 ) {
     val repos by viewModel.repos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -39,7 +39,7 @@ fun RepoList(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick={onNavigateToForm},
+                onClick={onNavigateToForm()},
                 shape= CircleShape,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -87,9 +87,9 @@ fun RepoList(
 
 @Preview
 @Composable
-fun RepoListViewModel(){
-    GithubClientTheme() {
-        RepoList()
+fun RepoListPreview() {
+    GithubClientTheme {
+        RepoList(onNavigateToForm = {})
     }
 }
 
