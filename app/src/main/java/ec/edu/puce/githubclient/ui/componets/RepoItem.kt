@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 
@@ -18,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import ec.edu.puce.githubclient.models.GitHubUser
 import ec.edu.puce.githubclient.models.Repository
@@ -27,7 +33,9 @@ import ec.edu.puce.githubclient.ui.theme.GithubClientTheme
 @Composable
 
 fun RepoItem (
-    repository: Repository
+    repository: Repository,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
 ) {
     Card(modifier = Modifier
         .padding(8.dp)
@@ -69,6 +77,14 @@ fun RepoItem (
                 }
 
             }
+            Column {
+                IconButton (onClick = onEdit) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar")
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Eliminar")
+                }
+            }
         }
 
     }
@@ -77,7 +93,7 @@ fun RepoItem (
 @Preview(showBackground = true)
 @Composable
 fun RepoItemPreview() {
-    GithubClientTheme() {
+    GithubClientTheme {
         val repository = Repository(
             id = "123",
             name = "Nombre del repositorio",
@@ -86,13 +102,14 @@ fun RepoItemPreview() {
             owner = GitHubUser(
                 id = "123",
                 login = "rodmunoz28@gmail.com",
-                avatarUrl = "https://static.vecteezy.com/system/resources/previews/077/675/681/non_2x/simple-outline-round-user-account-profile-avatar-sign-icon-vector.jpg",
-
+                avatarUrl = "https://static.vecteezy.com/system/resources/previews/077/675/681/non_2x/simple-outline-round-user-account-profile-avatar-sign-icon-vector.jpg"
             )
         )
+
         RepoItem(
-            repository
+            repository = repository,
+            onDelete = {  },
+            onEdit = {  }
         )
     }
-
 }

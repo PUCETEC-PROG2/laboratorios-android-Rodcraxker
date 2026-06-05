@@ -42,4 +42,21 @@ class RepoFormViewModel: ViewModel() {
     fun resetError(){
         _errorMsg.value = null
     }
+
+    // METODO UPDATE EN REPOFORMVIEWMODEL
+    fun updateRepository(owner: String, repoName: String, payload: RepositoryPayload) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = RetrofitClient.apiService.updateRepository(owner, repoName, payload)
+                // Manejar éxito (ej. navegar atrás)
+                _isSuccess.value = true
+            } catch (e: Exception) {
+                _errorMsg.value = "Error al actualizar: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
 }

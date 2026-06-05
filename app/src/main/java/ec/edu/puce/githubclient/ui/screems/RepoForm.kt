@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +38,8 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ec.edu.puce.githubclient.models.Repository
+import ec.edu.puce.githubclient.models.RepositoryPayload
 import ec.edu.puce.githubclient.ui.theme.GithubClientTheme
 import ec.edu.puce.githubclient.viewmodels.RepoFormViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +47,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepoForm(
+    repoToEdit: Repository? = null,
     onBackClick:() -> Unit = {},
     onSaveSuccess:() -> Unit = {},
     viewModel: RepoFormViewModel= viewModel()
@@ -52,9 +56,8 @@ fun RepoForm(
     val isLoading by viewModel.isLoading.collectAsState()
     val isSuccess by viewModel.isSuccess.collectAsState()
     val errMsg by viewModel.errMsg.collectAsState()
-
-    var name by remember{ mutableStateOf(value="") }
-    var description by remember { mutableStateOf(value = "") }
+    var name by remember { mutableStateOf(repoToEdit?.name ?: "") }
+    var description by remember { mutableStateOf(repoToEdit?.description ?: "") }
 
     LaunchedEffect(key1 = isSuccess) {
         if (isSuccess){
@@ -118,26 +121,36 @@ fun RepoForm(
 
                 )
 
-                if(errMsg.isNullOrBlank()){
+                if (!errMsg.isNullOrBlank()) {
                     Text(
-                        text=errMsg!!,
-                        color= MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align (Alignment.CenterHorizontally)
+                        text = errMsg!!, // Ahora es seguro porque ya verificaste que no es nulo
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(height = 48.dp))
                 Button(
-                    onClick = { viewModel.createRepository(name, description) },
-                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        if (repoToEdit != null) {
 
-                    ) {
+                            // Lógica para ACTUALIZAR O EDITAR (PATCH)
+
+                            val payload = RepositoryPayload(name = name, description = description)
+                            viewModel.updateRepository(repoToEdit.owner.login, repoToEdit.name, payload)
+                        } else {
+                            // Lógica para CREAR (POST)
+                            viewModel.createRepository(name, description)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Send,
-                        contentDescription = "Guardar"
+                        imageVector = if (repoToEdit != null) Icons.Default.Edit else Icons.Default.Send,
+                        contentDescription = null
                     )
-                    Spacer(modifier = Modifier.width(width = 8.dp))
-                    Text(text = "Guardar")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = if (repoToEdit != null) "Actualizar" else "Guardar")
                 }
             }
         }

@@ -24,10 +24,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ec.edu.puce.githubclient.ui.componets.RepoItem
 import ec.edu.puce.githubclient.ui.theme.GithubClientTheme
 import ec.edu.puce.githubclient.viewmodels.RepoListViewModel
+import ec.edu.puce.githubclient.models.Repository
 
 @Composable
 fun RepoList(
-    onNavigateToForm: () -> Unit, // Quita el ={} para que sea obligatorio
+    onNavigateToForm: (Repository?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RepoListViewModel = viewModel()
 ) {
@@ -39,7 +40,7 @@ fun RepoList(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick={onNavigateToForm()},
+                onClick={onNavigateToForm(null)},
                 shape= CircleShape,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -73,11 +74,16 @@ fun RepoList(
             }
 
             if (!isLoading && errMsg == null) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(count = repos.size) { i ->
-                        RepoItem(repository = repos[i])
+                        val repo = repos[i]
+                        RepoItem(
+                            repository = repo,
+                            onDelete = { viewModel.deleteRepo(repo.owner.login, repo.name) },
+                            onEdit = {
+                                onNavigateToForm(repo)
+                            }
+                        )
                     }
                 }
             }

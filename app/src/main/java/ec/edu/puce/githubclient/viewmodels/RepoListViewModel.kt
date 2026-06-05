@@ -37,4 +37,27 @@ class RepoListViewModel : ViewModel() {
             }
         }
     }
+
+    // METODO DELETE EN REPOLIESTVIEWMODEL
+    fun deleteRepo(owner: String, repoName: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // Usamos RetrofitClient.apiService como en tu método fetchRepos
+                val response = RetrofitClient.apiService.deleteRepository(owner, repoName)
+                if (response.isSuccessful) {
+
+                    fetchRepos()
+                } else {
+                    _errorMsg.value = "No se pudo eliminar el repositorio Error \${response.code()}: \${response.message()}"
+                }
+            } catch (e: Exception) {
+                _errorMsg.value = "Error: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+
 }
